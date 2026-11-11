@@ -1,0 +1,146 @@
+---
+title: "Assignment"
+author: "Pere Joan Vives Morey"
+date: "2026-11-10"
+output: html_document
+---
+
+# First Question
+
+Import the data set “bodyPerformance.csv” data to R and analyze following questions by using proper methods.
+
+## Task: Import data set to R assigning the type of each variable correctly.
+
+```{r}
+data <- read.csv("bodyPerformance.csv")
+str(data)
+```
+
+As we can see, the data set contains 12 variables and 13393 rows. Two of those variables are character type, and the rest are numerical type.
+
+```{r}
+unique(data$gender)
+unique(data$class)
+```
+
+The gender variable can have two distinct values, "M" for male and "F" for female. As for the class variable, it can have the values: [A,B,C,D].
+
+## Task: Summarize the numerical variables and analyze their distributions.
+
+```{r}
+summary(data)
+```
+
+While analyzing the numerical variables, we can observe the following:
+
+- Age: contains values between 21 and 64 (years old). It has a mean of 36.78 years old.
+- Height: contains values between 125 and 193.8 (cm). It has a mean of 168.6 cm.
+- Weight: contains values between 26.30 and 138.10 (kg). It has a mean of 67.56 kg.
+- Body fat: contains values between 3.00 and 78.40. It has a mean of 23.24.
+- Diastolic: contains values between 0 and 156.2. It has a mean of 78.8.
+- Systolic: contains values between 0 and 201.0. It has a mean of 130.2.
+- Sit and bend forward: contains values between -25.00 and 213.00. It has a mean of 15.21.
+- Sit up counts: contains values between 0 and 80.00. It has a mean of 39.77.
+- Broad Jump: contains values between 0 and 303.0 (cm). It has a mean of 190.1 cm.
+
+To better understand the distribution that each variable follow. We will use histograms, to observe the symmetry of the distribution, and box plots, to observe the dispersion of the data from the mean.
+
+To wrap the histograms together, the ggplot library will be used.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+
+data_num <- data %>%
+  select(where(is.numeric))
+
+#We transform the data to long format, which means that there will be a column for the fariables and a column for the values.
+
+long_data <- data_num %>%
+  pivot_longer(cols = everything(),
+               names_to = "variable",
+               values_to = "value")
+
+ggplot(long_data, aes(x = value)) +
+  geom_histogram(bins = 30,
+                 fill = "steelblue",
+                 color = "white") +
+  facet_wrap(~variable, scales = "free", ncol = 2) +
+  theme_minimal() +
+  labs(title = "Distribution of numerical variables",
+       x = "Value",
+       y = "Frequency")
+```
+At first glance most variables seem to have a symmetric distribution, the most skewed one being the age variable. However, in the age variable the values appear to be concentrated in the ages between 20 and 30, indicating that the sample is composed mainly of younger individuals.
+
+
+```{r}
+data_num <- data %>%
+  select(where(is.numeric))
+
+long_data <- data_num %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+ggplot(long_data, aes(x = "", y = value)) +
+  geom_boxplot(fill = "steelblue",
+               color = "black",
+               outlier.color = "red") +
+  facet_wrap(~variable, scales = "free", ncol = 3) +
+  theme_minimal() +
+  labs(title = "Boxplots of Numerical Variables",
+       x = "",
+       y = "Value")
+```
+The box plot show  that most numeric variables have a relatively concentrated distribution, although the level of variability varies between variables, the majority seem to have a low variability. Age seems to have a wider spread of values compared to the other variables, this could also be seen in the histograms. Moreover, some outliers can be observed in these variables:
+
+- Body fat
+- Diastolic
+- Height
+- Sit and bend forward
+- Systolic
+- Weight kg
+
+These values may have to be treated depending on the impact they can have in our models.
+
+## Task: Consider the variables of diastolic and systolic blood pressure. Eliminate the zero values and check their distributions for the gender groups using proper graph(s). Interpret your findings.
+
+
+```{r}
+sum(data$systolic == 0, na.rm = TRUE)
+```
+```{r}
+sum(data$diastolic == 0, na.rm = TRUE)
+```
+
+```{r}
+data <- data[data$systolic != 0,]
+data <- data[data$diastolic != 0,]
+sum(data$systolic == 0, na.rm = TRUE)
+sum(data$diastolic == 0, na.rm = TRUE)
+```
+```{r}
+ggplot(data,aes(x = gender, y = systolic, fill = gender)) +
+  geom_boxplot()+
+  labs(
+    title = "Systolic Blood Pressure by Gender",
+    x = "Gender",
+    y = "Systolic Blood Pressure"
+  ) +
+  theme(legend.position = "none")
+```
+```{r}
+ggplot(data,aes(x = gender, y = diastolic, fill = gender)) +
+  geom_boxplot()+
+  labs(
+    title = "Diastolic Blood Pressure by Gender",
+    x = "Gender",
+    y = "Diastolic Blood Pressure"
+  ) +
+  theme(legend.position = "none")
+```
