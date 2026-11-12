@@ -73,8 +73,8 @@ ggplot(long_data, aes(x = value)) +
        x = "Value",
        y = "Frequency")
 ```
-At first glance most variables seem to have a symmetric distribution, the most skewed one being the age variable. However, in the age variable the values appear to be concentrated in the ages between 20 and 30, indicating that the sample is composed mainly of younger individuals.
 
+At first glance most variables seem to have a symmetric distribution, the most skewed one being the age variable. However, in the age variable the values appear to be concentrated in the ages between 20 and 30, indicating that the sample is composed mainly of younger individuals.
 
 ```{r}
 data_num <- data %>%
@@ -97,7 +97,8 @@ ggplot(long_data, aes(x = "", y = value)) +
        x = "",
        y = "Value")
 ```
-The box plot show  that most numeric variables have a relatively concentrated distribution, although the level of variability varies between variables, the majority seem to have a low variability. Age seems to have a wider spread of values compared to the other variables, this could also be seen in the histograms. Moreover, some outliers can be observed in these variables:
+
+The box plot show that most numeric variables have a relatively concentrated distribution, although the level of variability varies between variables, the majority seem to have a low variability. Age seems to have a wider spread of values compared to the other variables, this could also be seen in the histograms. Moreover, some outliers can be observed in these variables:
 
 - Body fat
 - Diastolic
@@ -110,10 +111,10 @@ These values may have to be treated depending on the impact they can have in our
 
 ## Task: Consider the variables of diastolic and systolic blood pressure. Eliminate the zero values and check their distributions for the gender groups using proper graph(s). Interpret your findings.
 
-
 ```{r}
 sum(data$systolic == 0, na.rm = TRUE)
 ```
+
 ```{r}
 sum(data$diastolic == 0, na.rm = TRUE)
 ```
@@ -124,6 +125,7 @@ data <- data[data$diastolic != 0,]
 sum(data$systolic == 0, na.rm = TRUE)
 sum(data$diastolic == 0, na.rm = TRUE)
 ```
+
 ```{r}
 ggplot(data,aes(x = gender, y = systolic, fill = gender)) +
   geom_boxplot()+
@@ -134,6 +136,7 @@ ggplot(data,aes(x = gender, y = systolic, fill = gender)) +
   ) +
   theme(legend.position = "none")
 ```
+
 ```{r}
 ggplot(data,aes(x = gender, y = diastolic, fill = gender)) +
   geom_boxplot()+
@@ -144,3 +147,10 @@ ggplot(data,aes(x = gender, y = diastolic, fill = gender)) +
   ) +
   theme(legend.position = "none")
 ```
+
+
+## Task: Categorize the variable age into four categories cutting from the values 30,40 and 50 and save it as a new variable into your data frame.
+
+## Task: Analyze the association first between age groups and class and then between age groups and gender by using proper statistical method.
+
+## Task: Test whether physical performance test results of the individuals are affected from the gender. Check the assumptions and visualize the relationship between these two characteristics.
