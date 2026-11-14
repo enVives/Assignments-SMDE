@@ -148,9 +148,64 @@ ggplot(data,aes(x = gender, y = diastolic, fill = gender)) +
   theme(legend.position = "none")
 ```
 
+## Task: Construct 95% confidence intervals for the mean systolic blood pressure of two gender groups and interpret them.
+
+```{r}
+male <- subset(data, data$gender == "M")
+female <- subset(data, data$gender == "F")
+
+t.test(male$systolic, level = 0.95)
+t.test(female$systolic, level = 0.95)
+```
+
+This means that in the male group the mean is between the interval [133.5811 134.1590] with a confidence level of 95%.
+
+And in the female group, the mean is between the interval [123.6090 124.4141] with a confidence level of 95%.
 
 ## Task: Categorize the variable age into four categories cutting from the values 30,40 and 50 and save it as a new variable into your data frame.
 
+```{r}
+data$categorized_age <- cut(data$age, breaks = c(0,30,40,50,Inf),labels = c("<30","30-40","40-50",">50"),right = FALSE)
+```
+
 ## Task: Analyze the association first between age groups and class and then between age groups and gender by using proper statistical method.
 
+Age group and class are both categorical, so chi-squared will be used. The hypotheses will be:
+
+H0: Age groups and class are independent H1: Age groups and class are associated
+
+Age group and gender are also both categorical. The hypotheses will be:
+
+H0: Age groups and gender are independent H1: Age groups and gender are associated
+
+```{r}
+age_class_table <- table(data$categorized_age,data$class)
+age_gender_table <- table(data$categorized_age,data$gender)
+
+chisq.test(age_class_table)
+chisq.test(age_gender_table)
+```
+
+In both cases chi-squared detects that the amount of males and females changes with the variables class and gender, therefore they are associated. However, this doesn't necessarily mean that age explains gender or that age explains class.
+
 ## Task: Test whether physical performance test results of the individuals are affected from the gender. Check the assumptions and visualize the relationship between these two characteristics.
+
+The physical performance test results can be found in the following variables:
+
+- Grip force
+- Sit and bend forward
+- Sit up counts
+- Broad jump
+
+Because we are checking how a categorical variable affects these numerical variables, the Independent Samples t-test will be used. The following should be checked
+
+- Normality: the numeric variable must follow a normal distribution. We can check it visually and with shapiro test
+- Homogeneity of variances: the variance between the genders must be similar
+
+
+```{r}
+gender_grip_table <- table(data$gender,data$gripForce)
+gender_sit_bend_table <- table(data$gender,data$sit.and.bend.forward_cm)
+gender_situp_table <- table(data$gender,data$sit.ups.counts)
+gender_broad_table <- table(data$gender,data$broad.jump_cm)
+```
