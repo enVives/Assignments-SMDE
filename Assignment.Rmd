@@ -199,13 +199,81 @@ The physical performance test results can be found in the following variables:
 
 Because we are checking how a categorical variable affects these numerical variables, the Independent Samples t-test will be used. The following should be checked
 
-- Normality: the numeric variable must follow a normal distribution. We can check it visually and with shapiro test
-- Homogeneity of variances: the variance between the genders must be similar
-
+- Normality: the numeric variable must follow a normal distribution. We can check it visually and with shapiro test.
 
 ```{r}
-gender_grip_table <- table(data$gender,data$gripForce)
-gender_sit_bend_table <- table(data$gender,data$sit.and.bend.forward_cm)
-gender_situp_table <- table(data$gender,data$sit.ups.counts)
-gender_broad_table <- table(data$gender,data$broad.jump_cm)
+?shapiro.test
+shapiro.test(sample(data$gripForce[data$gender == "M"],5000))
+shapiro.test(data$gripForce[data$gender == "F"])
+shapiro.test(sample(data$sit.and.bend.forward_cm[data$gender == "M"],5000))
+shapiro.test(data$sit.and.bend.forward_cm[data$gender == "F"])
+shapiro.test(sample(data$sit.ups.counts[data$gender == "M"],5000))
+shapiro.test(data$sit.ups.counts[data$gender == "F"])
+shapiro.test(sample(data$broad.jump_cm[data$gender == "M"],5000))
+shapiro.test(data$broad.jump_cm[data$gender == "F"])
+```
+
+
+- Homogeneity of variances: the variance between the genders must be similar
+
+```{r}
+var.test(data$gripForce~data$gender, data = data)
+var.test(data$sit.and.bend.forward_cm~data$gender, data = data)
+var.test(data$sit.ups.counts~data$gender, data = data)
+var.test(data$broad.jump_cm~data$gender, data = data)
+```
+
+```{r}
+t.test(data$gripForce~data$gender, var.equal = TRUE)
+t.test(data$sit.and.bend.forward_cm~data$gender, var.equal = TRUE)
+t.test(data$sit.ups.counts~data$gender, var.equal = TRUE)
+t.test(data$broad.jump_cm~data$gender, var.equal = TRUE)
+```
+
+```{r}
+ggplot(data, aes(x = gender, y = gripForce,
+                 fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Grip force by gender",
+    x = "Gender",
+    y = "Grip force"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data, aes(x = gender, y = sit.and.bend.forward_cm,
+                 fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Sit and bend forward by gender",
+    x = "Gender",
+    y = "Sit and bend forward"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data, aes(x = gender, y = sit.ups.counts,
+                 fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Sit up counts by gender",
+    x = "Gender",
+    y = "Sit up counts"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data, aes(x = gender, y = broad.jump_cm,
+                 fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(
+    title = "Broad jump by gender",
+    x = "Gender",
+    y = "Broad jump"
+  ) +
+  theme_minimal()
 ```
